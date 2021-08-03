@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">JCV</string>
+    <string name="title_my_colors">My Colors</string>
+    <string name="info_permissions_not_granted">Permissions not granted by the user.</string>
+    <string name="switch_camera">Switch Camera</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="control_flash">Control Flash</string>
+</resources>
