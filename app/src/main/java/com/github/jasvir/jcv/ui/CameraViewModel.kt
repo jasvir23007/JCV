@@ -7,9 +7,16 @@ import androidx.camera.core.ImageCaptureException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.jasvir.jcv.R
 import com.github.jasvir.jcv.annotations.FlashMode
 import com.github.jasvir.jcv.annotations.LensType
+import com.github.jasvir.jcv.data.api.ApiRepo
+import com.github.jasvir.jcv.data.data_classes.UploadResponse
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.Executors
@@ -27,7 +34,9 @@ import java.util.concurrent.Executors
  * the License.
  *
  **/
-class CameraViewModel : ViewModel() {
+class CameraViewModel(private val apiRepository: ApiRepo,
+                      private val moshi: Moshi
+) : ViewModel() {
 
     private val _cameraConfig = MutableLiveData<CameraConfig>()
     val cameraConfig: LiveData<CameraConfig>
@@ -90,6 +99,7 @@ class CameraViewModel : ViewModel() {
                     val msg = "Photo capture succeeded ${file.path}"
                     Timber.d(msg)
                     setOnImageCapturedResult(msg)
+                    uploadPhoto(file)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -100,6 +110,45 @@ class CameraViewModel : ViewModel() {
             }
         )
     }
+
+
+    private fun uploadPhoto(photo: File) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val deferred = apiRepository.uploadPhotoAsync(photo)
+                val response = deferred.await()
+
+                launch(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        handleResponse(response.body())
+                    } else {
+                        handleException(
+                            Exception("${response.errorBody()} Response was not successful.")
+                        )
+                    }
+                }
+            } catch (exception: Exception) {
+                launch(Dispatchers.Main) {
+                    handleException(exception)
+                }
+            }
+        }
+    }
+
+    private fun handleResponse(response: UploadResponse?) {
+        response?.let {
+            val jsonAdapter: JsonAdapter<UploadResponse> =
+                moshi.adapter(UploadResponse::class.java)
+
+            Timber.d("ProfileResponse: ${jsonAdapter.toJson(response)}")
+        }
+    }
+
+    private fun handleException(exception: Exception) {
+        Timber.e(exception)
+    }
+
+
 
 }
 

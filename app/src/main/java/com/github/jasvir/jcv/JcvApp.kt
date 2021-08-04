@@ -3,6 +3,7 @@ package com.github.jasvir.jcv
 import android.app.Application
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraXConfig
+import com.github.jasvir.jcv.di.apiModule
 import com.github.jasvir.jcv.di.framework
 import com.github.jasvir.jcv.di.viewModel
 import org.koin.android.ext.koin.androidContext
@@ -10,6 +11,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import timber.log.Timber
+import kotlin.time.ExperimentalTime
 
 /**
  *
@@ -26,6 +28,7 @@ import timber.log.Timber
  **/
 class JcvApp : Application(), CameraXConfig.Provider {
 
+    @ExperimentalTime
     override fun onCreate() {
         super.onCreate()
 
@@ -39,11 +42,12 @@ class JcvApp : Application(), CameraXConfig.Provider {
             Timber.plant(Timber.DebugTree())
     }
 
+    @ExperimentalTime
     private fun initKoin() {
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@JcvApp)
-            modules(listOf(framework, viewModel))
+            modules(listOf(apiModule,framework, viewModel))
         }
     }
 

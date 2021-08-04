@@ -28,5 +28,5 @@ val framework = module {
 }
 
 val viewModel = module {
-    viewModel { CameraViewModel() }
+    viewModel { CameraViewModel(get(),get()) }
 }
