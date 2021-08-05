@@ -80,8 +80,8 @@ val apiModule = module {
         val networkInterceptor: Interceptor by inject(named("NetworkInterceptor"))
 
         val builder = OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS)
-            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
+            .connectTimeout(90, TimeUnit.SECONDS)
             .writeTimeout(90, TimeUnit.SECONDS)
             .addInterceptor(httpLoggingInterceptor)
 

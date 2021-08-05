@@ -1,16 +1,16 @@
 package com.github.jasvir.jcv.ui
 
+import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.github.jasvir.jcv.R
 import com.github.jasvir.jcv.annotations.FlashMode
 import com.github.jasvir.jcv.annotations.LensType
+import com.github.jasvir.jcv.constants.Const.COORDINATES
+import com.github.jasvir.jcv.constants.Const.IMG_FILE
 import com.github.jasvir.jcv.data.api.ApiRepo
 import com.github.jasvir.jcv.data.data_classes.UploadResponse
 import com.squareup.moshi.JsonAdapter
@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.Executors
+
 
 /**
  *
@@ -34,8 +35,9 @@ import java.util.concurrent.Executors
  * the License.
  *
  **/
-class CameraViewModel(private val apiRepository: ApiRepo,
-                      private val moshi: Moshi
+class CameraViewModel(
+    private val apiRepository: ApiRepo,
+    private val moshi: Moshi
 ) : ViewModel() {
 
     private val _cameraConfig = MutableLiveData<CameraConfig>()
@@ -45,6 +47,9 @@ class CameraViewModel(private val apiRepository: ApiRepo,
     private val _onImageCapturedResult = MutableLiveData<String>()
     val onImageCapturedResult: LiveData<String>
         get() = _onImageCapturedResult
+
+    val displayData = MutableLiveData<Bundle>()
+
 
     init {
         //Default Config
@@ -89,8 +94,8 @@ class CameraViewModel(private val apiRepository: ApiRepo,
         )
         imageCapture.takePicture(
             ImageCapture.OutputFileOptions.Builder(
-                    file
-                )
+                file
+            )
                 .build(),
             Executors.newSingleThreadExecutor(),
             object : ImageCapture.OnImageSavedCallback {
@@ -120,7 +125,7 @@ class CameraViewModel(private val apiRepository: ApiRepo,
 
                 launch(Dispatchers.Main) {
                     if (response.isSuccessful) {
-                        handleResponse(response.body())
+                        handleResponse(response.body(), photo)
                     } else {
                         handleException(
                             Exception("${response.errorBody()} Response was not successful.")
@@ -135,19 +140,22 @@ class CameraViewModel(private val apiRepository: ApiRepo,
         }
     }
 
-    private fun handleResponse(response: UploadResponse?) {
+    private fun handleResponse(response: UploadResponse?, photo: File) {
         response?.let {
             val jsonAdapter: JsonAdapter<UploadResponse> =
                 moshi.adapter(UploadResponse::class.java)
-
             Timber.d("ProfileResponse: ${jsonAdapter.toJson(response)}")
+            val bundle = Bundle()
+            bundle.putString(IMG_FILE, photo.path)
+            bundle.putParcelable(COORDINATES, response.result)
+            displayData.value = bundle
+
         }
     }
 
     private fun handleException(exception: Exception) {
         Timber.e(exception)
     }
-
 
 
 }

@@ -15,3 +15,5 @@ package com.github.jasvir.jcv.ui
  **/
 class CameraLifecycleComponent
 //TODO Move Logic to lifecycle component and register in camera activity
+
+

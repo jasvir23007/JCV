@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.github.jasvir.jcv.R
+import com.github.jasvir.jcv.databinding.ActivityCameraBinding
 import com.github.jasvir.jcv.utils.CameraUtils
 import com.github.jasvir.jcv.utils.PermissionUtils.RQ_PERMISSIONS
 import com.github.jasvir.jcv.utils.PermissionUtils.allPermissionsGranted
@@ -35,14 +36,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * the License.
  *
  **/
-class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
+class CameraActivity : AppCompatActivity() {
 
     //TODO Animate Switching Cameras
     //TODO Show Preview of captured image
-    private lateinit var viewFinder: PreviewView
-    private lateinit var btnSwitchCamera: ImageButton
-    private lateinit var btnTakePicture: ImageButton
-    private lateinit var btnControlFlash: ImageButton
+    private lateinit var binding:ActivityCameraBinding
     private val preview: Preview by inject()
     private val cameraProviderFuture: ListenableFuture<ProcessCameraProvider> by inject()
     private val cameraViewModel: CameraViewModel by viewModel()
@@ -51,10 +49,8 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setTransparentBars(this)
-
         initViews()
+        setTransparentBars(this)
     }
 
     override fun onStart() {
@@ -65,6 +61,7 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
             )
         })
         observeOnImageCaptured()
+        displayData()
     }
 
 
@@ -72,16 +69,14 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
         if (allPermissionsGranted(this, CameraUtils.CAMERA_PERMISSIONS)) {
             cameraViewModel.cameraConfig.observe(this, Observer { config ->
                 //Adds runnable to the message queue which will be handled on the apps main thread
-                viewFinder.post { startCamera(config.lens, config.flash) }
+                binding.previewView.post { startCamera(config.lens, config.flash) }
             })
         } else onPermissionNotGranted()
     }
 
     private fun initViews() {
-        viewFinder = findViewById(R.id.preview_view)
-        btnSwitchCamera = findViewById(R.id.switch_camera_button)
-        btnTakePicture = findViewById(R.id.take_picture_button)
-        btnControlFlash = findViewById(R.id.control_flash_button)
+        binding = ActivityCameraBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 
     private fun startCamera(lens: Int, flashMode: Int) {
@@ -101,7 +96,7 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
 
         //Set Flash Icon
         val flashCamIcon = getDrawable(cameraViewModel.setFlashIcon(flashMode))
-        btnControlFlash.setImageDrawable(flashCamIcon)
+        binding.controlFlashButton.setImageDrawable(flashCamIcon)
 
         imageCapture = CameraUtils.buildImageCapture(
             ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY,
@@ -114,7 +109,7 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
         )
 
         // Connect the preview use case to the previewView
-        preview.setSurfaceProvider(viewFinder.surfaceProvider)
+        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
     }
 
     override fun onRequestPermissionsResult(
@@ -172,6 +167,12 @@ class CameraActivity : AppCompatActivity(R.layout.activity_camera) {
     private fun observeOnImageCaptured() {
         cameraViewModel.onImageCapturedResult.observe(this, Observer { msg ->
             showToast(msg)
+        })
+    }
+
+    private fun displayData(){
+        cameraViewModel.displayData.observe(this, Observer {
+            FragmentDialog.newInstance(it).show(supportFragmentManager,"")
         })
     }
 }
