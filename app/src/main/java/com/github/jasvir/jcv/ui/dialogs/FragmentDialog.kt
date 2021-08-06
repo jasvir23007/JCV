@@ -1,11 +1,10 @@
-package com.github.jasvir.jcv.ui
+package com.github.jasvir.jcv.ui.dialogs
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment

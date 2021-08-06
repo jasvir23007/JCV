@@ -2,18 +2,19 @@ package com.github.jasvir.jcv.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.github.jasvir.jcv.R
 import com.github.jasvir.jcv.databinding.ActivityCameraBinding
+import com.github.jasvir.jcv.extention.ProgressExtention.dismiss
+import com.github.jasvir.jcv.extention.ProgressExtention.showPogressDialog
+import com.github.jasvir.jcv.ui.dialogs.FragmentDialog
 import com.github.jasvir.jcv.utils.CameraUtils
 import com.github.jasvir.jcv.utils.PermissionUtils.RQ_PERMISSIONS
 import com.github.jasvir.jcv.utils.PermissionUtils.allPermissionsGranted
@@ -166,13 +167,15 @@ class CameraActivity : AppCompatActivity() {
 
     private fun observeOnImageCaptured() {
         cameraViewModel.onImageCapturedResult.observe(this, Observer { msg ->
-            showToast(msg)
+            this@CameraActivity.showPogressDialog().show()
         })
     }
 
     private fun displayData(){
         cameraViewModel.displayData.observe(this, Observer {
+            this@CameraActivity.dismiss()
             FragmentDialog.newInstance(it).show(supportFragmentManager,"")
         })
     }
+
 }
