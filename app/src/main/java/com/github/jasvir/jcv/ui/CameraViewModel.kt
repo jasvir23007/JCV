@@ -40,11 +40,11 @@ class CameraViewModel(
     private val moshi: Moshi
 ) : ViewModel() {
 
-    private val _cameraConfig = MutableLiveData<CameraConfig>()
+     val _cameraConfig = MutableLiveData<CameraConfig>()
     val cameraConfig: LiveData<CameraConfig>
         get() = _cameraConfig
 
-    private val _onImageCapturedResult = MutableLiveData<String>()
+     val _onImageCapturedResult = MutableLiveData<String>()
     val onImageCapturedResult: LiveData<String>
         get() = _onImageCapturedResult
 
@@ -117,7 +117,7 @@ class CameraViewModel(
     }
 
 
-    private fun uploadPhoto(photo: File) {
+     fun uploadPhoto(photo: File) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val deferred = apiRepository.uploadPhotoAsync(photo)

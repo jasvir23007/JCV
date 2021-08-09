@@ -1,0 +1,40 @@
+{
+  "result": {
+    "faces": [
+      {
+        "attributes": [
+          {
+            "confidence": 99.73486328125,
+            "label": "kids",
+            "type": "age"
+          },
+          {
+            "confidence": 99.9016189575195,
+            "label": "female",
+            "type": "gender"
+          },
+          {
+            "confidence": 99.9989395141602,
+            "label": "caucasian",
+            "type": "ethnicity"
+          }
+        ],
+        "confidence": 99.99755859375,
+        "coordinates": {
+          "height": 122,
+          "width": 122,
+          "xmax": 387,
+          "xmin": 265,
+          "ymax": 156,
+          "ymin": 34
+        },
+        "face_id": "60577279bdedbcfbd8b4186ad5a9bd94f89a9085985d0edd41ad38298058c44c",
+        "landmarks": []
+      }
+    ]
+  },
+  "status": {
+    "text": "",
+    "type": "success"
+  }
+}
