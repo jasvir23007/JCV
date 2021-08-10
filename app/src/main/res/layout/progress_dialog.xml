@@ -7,14 +7,14 @@
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
-        android:layout_width="100dp"
-        android:layout_margin="7dp"
-        android:layout_height="100dp"/>
+        android:layout_width="@dimen/progress_height_width"
+        android:layout_margin="@dimen/margin_normal"
+        android:layout_height="@dimen/progress_height_width"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_margin="7dp"
+        android:layout_margin="@dimen/margin_normal"
         android:layout_toEndOf="@+id/progressBar"
-        android:text="Loading..." />
+        android:text="@string/loading" />
 </RelativeLayout>
