@@ -16,11 +16,12 @@ import com.github.jasvir.jcv.constants.Const.IMG_FILE
 import com.github.jasvir.jcv.data.data_classes.Faces
 import com.github.jasvir.jcv.data.data_classes.Result
 import com.github.jasvir.jcv.databinding.FragmentImageDialogBinding
+import com.github.jasvir.jcv.extention.BitmapExtention.flipIMage
 
 
 class FragmentDialog : DialogFragment(), LifecycleObserver {
     private lateinit var binding: FragmentImageDialogBinding
-    private var filePath:String? = null
+    private var filePath: String? = null
     private var coordinates: Result? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -32,11 +33,11 @@ class FragmentDialog : DialogFragment(), LifecycleObserver {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun onCreated(){
+    fun onCreated() {
         requireActivity().lifecycle.removeObserver(this)
         filePath = arguments?.getString(IMG_FILE)!!
         coordinates = arguments?.getParcelable(COORDINATES)!!
-        detectFace(BitmapFactory.decodeFile(filePath),coordinates!!.faces)
+        detectFace(BitmapFactory.decodeFile(filePath).flipIMage(), coordinates!!.faces)
     }
 
 
@@ -50,7 +51,7 @@ class FragmentDialog : DialogFragment(), LifecycleObserver {
         }
     }
 
-    private fun detectFace(image: Bitmap,faces: List<Faces>) {
+    private fun detectFace(image: Bitmap, faces: List<Faces>) {
         val paint = Paint()
         paint.strokeWidth = 6F
         paint.color = Color.RED
@@ -63,13 +64,8 @@ class FragmentDialog : DialogFragment(), LifecycleObserver {
             val thisFace: Faces = faces.get(i)
             val x1: Float = thisFace.coordinates.xmin.toFloat()
             val y1: Float = thisFace.coordinates.ymin.toFloat()
-          //  val x2: Float = x1 + thisFace.coordinates.width
-          //  val y2: Float = y1 + thisFace.coordinates.height
-
-              val x2: Float = thisFace.coordinates.xmax.toFloat()
-              val y2: Float = thisFace.coordinates.ymax.toFloat()
-
-
+            val x2: Float = thisFace.coordinates.xmax.toFloat()
+            val y2: Float = thisFace.coordinates.ymax.toFloat()
             canvas.drawRoundRect(RectF(x1, y1, x2, y2), 0F, 0F, paint)
         }
 
@@ -84,8 +80,6 @@ class FragmentDialog : DialogFragment(), LifecycleObserver {
             return fragmentDialog
         }
     }
-
-
 
 
 }
