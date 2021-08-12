@@ -4,7 +4,7 @@ App contains a camera screen which is displayed once app is opened and there wil
 when image is captured by user then immage api call takes place to detect face and once we get the results 
 they are displayed in a dialog Fragment with a rectangle over face.
 
-#Architecture & Libraries
+# Architecture & Libraries
 Architecture - MVVM
 DI - Koin
 Api call - Retrofit,Okhttp
