@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.github.jasvir.jcv.R
+import com.github.jasvir.jcv.constants.Const.DISPLAY_FRAG
 import com.github.jasvir.jcv.databinding.ActivityCameraBinding
 import com.github.jasvir.jcv.extention.ProgressExtention.dismiss
 import com.github.jasvir.jcv.extention.ProgressExtention.showPogressDialog
@@ -166,6 +167,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun observeOnImageCaptured() {
+
         cameraViewModel.onImageCapturedResult.observe(this, Observer { msg ->
             this@CameraActivity.showPogressDialog().show()
         })
@@ -174,7 +176,7 @@ class CameraActivity : AppCompatActivity() {
     private fun displayData(){
         cameraViewModel.displayData.observe(this, Observer {
             this@CameraActivity.dismiss()
-            FragmentDialog.newInstance(it).show(supportFragmentManager,"")
+            FragmentDialog.newInstance(it).show(supportFragmentManager,DISPLAY_FRAG)
         })
     }
 

@@ -1,5 +1,7 @@
 package com.github.jasvir.jcv.data.api
 
+import com.github.jasvir.jcv.BuildConfig
+import com.github.jasvir.jcv.R
 import com.github.jasvir.jcv.data.data_classes.UploadResponse
 
 import kotlinx.coroutines.Deferred
@@ -25,6 +27,6 @@ class ApiRepository(private val apiService: ApiService) : ApiRepo {
             imageRequestFile
         )
 
-        return apiService.uploadPhotoAsync("Basic YWNjX2JjOWFkYTEyMzI3MjhjMToxZWY4NTVkMDhlZDAwNzcyZjcwNDVmNjUyMDMyMmQwNA==",photoPart)
+        return apiService.uploadPhotoAsync(BuildConfig.AUTH,photoPart)
     }
 }

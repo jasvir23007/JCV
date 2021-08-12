@@ -11,6 +11,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.github.jasvir.jcv.constants.Const
 import com.github.jasvir.jcv.constants.Const.COORDINATES
 import com.github.jasvir.jcv.constants.Const.IMG_FILE
 import com.github.jasvir.jcv.data.data_classes.Faces
@@ -37,9 +40,19 @@ class FragmentDialog : DialogFragment(), LifecycleObserver {
         requireActivity().lifecycle.removeObserver(this)
         filePath = arguments?.getString(IMG_FILE)!!
         coordinates = arguments?.getParcelable(COORDINATES)!!
-        detectFace(BitmapFactory.decodeFile(filePath).flipIMage(), coordinates!!.faces)
+        detectFace(BitmapFactory.decodeFile(filePath).flipIMage(filePath!!), coordinates!!.faces)
+        setClick()
     }
 
+   private fun setClick() {
+        binding.ivClose.setOnClickListener {
+            val prev = requireActivity().supportFragmentManager.findFragmentByTag(Const.DISPLAY_FRAG)
+            if (prev != null) {
+                val df = prev as DialogFragment
+                df.dismiss()
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -64,12 +77,16 @@ class FragmentDialog : DialogFragment(), LifecycleObserver {
             val thisFace: Faces = faces.get(i)
             val x1: Float = thisFace.coordinates.xmin.toFloat()
             val y1: Float = thisFace.coordinates.ymin.toFloat()
-            val x2: Float = thisFace.coordinates.xmax.toFloat()
-            val y2: Float = thisFace.coordinates.ymax.toFloat()
+            val x2: Float = x1 + thisFace.coordinates.width
+            val y2: Float = y1 + thisFace.coordinates.height
+
             canvas.drawRoundRect(RectF(x1, y1, x2, y2), 0F, 0F, paint)
         }
+        canvas.scale(-1F, 1F);
 
         binding.ivDisplayImg.setImageDrawable(BitmapDrawable(resources, tempBitmap))
+
+
     }
 
 
